@@ -18,6 +18,7 @@ frame = LabelFrame(root, bg ="#eaebeb", font=('Palatino Linotype',20,'bold'),tex
 frame.pack(padx=20, pady=20)
 
 #Clicking the add button
+#This is the function that generates the GUI for adding a student as well as capturing the inputted info 
 def add():
     top=Toplevel()
     top.title('ADD STUDENTS')
@@ -67,9 +68,11 @@ def add():
     gender.grid(row=4, column=1, pady=8)
     
     #ADD NEW STUDENT
+    #This is the function that adds a student to the csv file
     def addData():
         with open('ssis.csv', "a", newline="") as file:
             csvfile = csv.writer(file)
+            #Conditional statement checking if the input field are all filled
             if  ID.get() == "" or name.get() == "" or gender.get() == "" or course.get() == "" or ylevel.get()== "":
                 tkinter.messagebox.showinfo("Student Information System","Please Fill In the Box")
             else:
@@ -81,6 +84,7 @@ def add():
     submit.grid(row=5, column=0, columnspan=3,pady=8)
  
 #from the Main Window -- VIEW
+#This the function that creates the GUI for displaying the list of students
 def view():
     this=Toplevel(bg="white")
     this.geometry("940x510")
@@ -90,8 +94,10 @@ def view():
     mainFrame.pack(padx=20, pady=20)
     
     Label(mainFrame, text="List of Students", font = ('Palatino Linotype', 30, 'bold'),fg="#104c70",bg="#eaebeb", width=35).grid(row=0,column=0, columnspan=5, pady=10)
-
+    
+    #function for reading the csv file and displaying the contents on a treeview widget
     def viewList():
+        #Deletes the current nodes in the treeview in order to refresh list
         for i in tree.get_children():
             tree.delete(i)
         with open("ssis.csv","r") as file:
@@ -102,7 +108,9 @@ def view():
                             values=(student[0],student[1],student[2],student[3],student[4]))
                 counter += 1
     #SEARCH
+    #This is the function that searches the corresponding id number that starts with the inputted data in the searchbar
     def search():
+        #Deletes the current nodes in the treeview in order to refresh list
         for i in tree.get_children():
             tree.delete(i)
         with open("ssis.csv","r") as file:
@@ -116,6 +124,7 @@ def view():
                 counter += 1
                 
     #DELETE
+    #This is the function that deletes a student from a csv file
     def delete():
         selected = tree.focus()
         stud_id = tree.item(selected, "values")[0]
@@ -140,15 +149,20 @@ def view():
         viewList()
                 
     #UPDATE STUDENT
+    #This the function for creating the GUI for updating student information as well as updating the recorded information in the csv file
     def update(index):
+        #This is the function that updates information in the csv file regarding a particular student
         def thisUpdate(studentList):
             with open('ssis.csv','w',newline='') as file:
                 newList = csv.writer(file)
                 for i in range(len(studentList)):
                     print(studentList[i])
+                    #Condition statemental checking if the student number matches the identified id number info to be updated
                     if i == index:
+                        #If so, gets the modified information in the input fields
                         newList.writerow([ID.get(),name.get(),course.get(),ylevel.get(), gender.get()])
                         continue
+                    #If not, just writes the old student info in the csv file
                     newList.writerow(studentList[i])
             top.destroy()
             viewList()
@@ -267,10 +281,12 @@ def view():
     tree.heading("Year Level", text="Year Level", anchor=CENTER)
     tree.heading("Gender", text="Gender", anchor=CENTER)
     
+    #This function enables the clickability of the edit and delete button upon click on a treeview node
     def clicked(*args):
         edit['state'] = NORMAL
         delete['state'] = NORMAL
-        
+    
+    #calls a function when a treeview node is left clicked    
     tree.bind("<Button-1>", clicked)
     viewList()
 
