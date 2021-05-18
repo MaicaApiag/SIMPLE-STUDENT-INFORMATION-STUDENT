@@ -9,7 +9,6 @@ from tkinter import ttk
 import tkinter.messagebox
 import csv
 
-
 #Main Window
 root = Tk()
 root.title('Student Information System')
@@ -18,7 +17,7 @@ frame = LabelFrame(root, bg ="#eaebeb", font=('Palatino Linotype',20,'bold'),tex
 frame.pack(padx=20, pady=20)
 
 #Clicking the add button
-#This is the function that generates the GUI for adding a student as well as capturing the inputted info 
+#This is the function that generates the GUI for adding a student as well as capturing the inputted info
 def add():
     top=Toplevel()
     top.title('ADD STUDENTS')
@@ -75,7 +74,16 @@ def add():
             #Conditional statement checking if the input field are all filled
             if  ID.get() == "" or name.get() == "" or gender.get() == "" or course.get() == "" or ylevel.get()== "":
                 tkinter.messagebox.showinfo("Student Information System","Please Fill In the Box")
+                
             else:
+                with open("ssis.csv","r") as file:
+                    listStudents = csv.reader(file)
+                    counter = 0
+                    for student in listStudents:
+                        if student[0] == ID.get() or student[1] == name.get():
+                            tkinter.messagebox.showinfo("Student Information System","ID Number Already Exist")
+                            return
+                    
                 csvfile.writerow([ID.get(),name.get(),course.get(),ylevel.get(), gender.get()])
                 tkinter.messagebox.showinfo("Student Information System","Student Recorded Successfully")
                 top.destroy()
@@ -97,7 +105,7 @@ def view():
     
     #function for reading the csv file and displaying the contents on a treeview widget
     def viewList():
-        #Deletes the current nodes in the treeview in order to refresh list
+        #Displaying the list of students fron the csv file
         for i in tree.get_children():
             tree.delete(i)
         with open("ssis.csv","r") as file:
@@ -133,6 +141,8 @@ def view():
             reader = csv.reader(file)
             data = list(reader)
         x = [stud_id in student for student in data]
+        
+        #list comprehension accessing the item index
         index = [i for i, y in enumerate(x) if y]
         if sum(x) > 1:
             pass
@@ -281,12 +291,12 @@ def view():
     tree.heading("Year Level", text="Year Level", anchor=CENTER)
     tree.heading("Gender", text="Gender", anchor=CENTER)
     
-    #This function enables the clickability of the edit and delete button upon click on a treeview node
+    #This function enables the clickability of the edit and delete button upon click on a treeview node 
     def clicked(*args):
         edit['state'] = NORMAL
         delete['state'] = NORMAL
     
-    #calls a function when a treeview node is left clicked    
+    #calls a function when a treeview node is left clicked 
     tree.bind("<Button-1>", clicked)
     viewList()
 
