@@ -56,7 +56,7 @@ def add():
     YLabel = Label(StudInf, font=('Palatino Linotype',13, 'bold'),text="Year Level ", padx=2, pady=2, bg="#eaebeb", fg="#104c70")
     YLabel.grid(row=3, column=0, sticky=W)
     ylevel = ttk.Combobox(StudInf, font=('Palatino Linotype',13),state='readonly', width=37)
-    ylevel['values']=('','1st Year','2nd Year','3rd Year','4th Year')
+    ylevel['values']=('','1st Year','2nd Year','3rd Year','4th Year','5th Year')
     ylevel.current(0)
     ylevel.grid(row=3, column=1, pady=8)
 
