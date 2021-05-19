@@ -12,6 +12,7 @@ import csv
 #Main Window
 root = Tk()
 root.title('Student Information System')
+root.resizable(False, False)
 
 frame = LabelFrame(root, bg ="#eaebeb", font=('Palatino Linotype',20,'bold'),text="Student Information System", fg="#104c70",padx=100, pady=80)
 frame.pack(padx=20, pady=20)
@@ -79,14 +80,26 @@ def add():
                 with open("ssis.csv","r") as file:
                     listStudents = csv.reader(file)
                     counter = 0
-                    for student in listStudents:
+                    for student in listStudents:                        
                         if student[0] == ID.get() or student[1] == name.get():
-                            tkinter.messagebox.showinfo("Student Information System","ID Number Already Exist")
+                            tkinter.messagebox.showinfo("Student Information System","ID Number Already Exists")
                             return
-                    
-                csvfile.writerow([ID.get(),name.get(),course.get(),ylevel.get(), gender.get()])
-                tkinter.messagebox.showinfo("Student Information System","Student Recorded Successfully")
-                top.destroy()
+                x = StdID.get()
+                id_list = []
+                for i in x:
+                    id_list.append(i)
+                if "-" in id_list:
+                    y = x.split("-")
+                    year = y[0]
+                    number = y[1]
+                    if year.isdigit() == False or number.isdigit() == False:
+                        tkinter.messagebox.showerror("SSIS","Invalid ID")
+                    else:
+                        csvfile.writerow([ID.get(),name.get(),course.get(),ylevel.get(), gender.get()])
+                        tkinter.messagebox.showinfo("Student Information System","Student Recorded Successfully")
+                        top.destroy()
+                else:
+                    tkinter.messagebox.showerror("SSIS","Invalid ID")
     
     submit=Button(StudInf, text="SUBMIT",command=addData, font=('Palatino Linotype', 15,'bold'), bg="#104c70", fg="white")
     submit.grid(row=5, column=0, columnspan=3,pady=8)
@@ -163,19 +176,32 @@ def view():
     def update(index):
         #This is the function that updates information in the csv file regarding a particular student
         def thisUpdate(studentList):
-            with open('ssis.csv','w',newline='') as file:
-                newList = csv.writer(file)
-                for i in range(len(studentList)):
-                    print(studentList[i])
-                    #Condition statemental checking if the student number matches the identified id number info to be updated
-                    if i == index:
-                        #If so, gets the modified information in the input fields
-                        newList.writerow([ID.get(),name.get(),course.get(),ylevel.get(), gender.get()])
-                        continue
-                    #If not, just writes the old student info in the csv file
-                    newList.writerow(studentList[i])
-            top.destroy()
-            viewList()
+            if  ID.get() == "" or name.get() == "" or gender.get() == "" or course.get() == "" or ylevel.get()== "":
+                tkinter.messagebox.showinfo("Student Information System","Please Fill In the Box")
+                
+            else:
+                with open("ssis.csv","r") as file:
+                    listStudents = csv.reader(file)
+                    counter = 0
+                    for student in listStudents:
+                        if student[1] == name.get():
+                            if student[0] == ID.get():
+                                continue
+                            tkinter.messagebox.showinfo("Student Information System","ID Number Already Exists")
+                            return
+                with open('ssis.csv','w',newline='') as file:
+                    newList = csv.writer(file)
+                    for i in range(len(studentList)):
+                        print(studentList[i])
+                        #Condition statemental checking if the student number matches the identified id number info to be updated
+                        if i == index:
+                            #If so, gets the modified information in the input fields
+                            newList.writerow([ID.get(),name.get(),course.get(),ylevel.get(), gender.get()])
+                            continue
+                        #If not, just writes the old student info in the csv file
+                        newList.writerow(studentList[i])
+                top.destroy()
+                viewList()
         
         #POP-UP WINDOW FOR UPDATING STUDENT
         top=Toplevel()
@@ -238,6 +264,7 @@ def view():
         submit.grid(row=5, column=0, columnspan=3,pady=8)
        
         ID.insert(0, studentInfo[0])
+        ID.config(state=DISABLED)
         name.insert(0, studentInfo[1])
         course.insert(0, studentInfo[2])
         if studentInfo[3] == "1st Year":
